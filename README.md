@@ -1,8 +1,8 @@
 # ConfigurationResolver
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/configuration_resolver`. To experiment with that code, run `bin/console` for an interactive prompt.
+## Overview
 
-TODO: Delete this and the text above, and describe your gem
+This is a dependency based hierarchical configuration resolver. It can be used to merge multiple groups of configuration, with each group containing configuration values or functions that override previously merged groups.
 
 ## Installation
 
@@ -22,7 +22,22 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Call `ConfigurationResolver::Resolver.merge_params` for each group of params that need to be merged in. The order in which the parameter groups are merged in will determine the hierarchical order, with later groups overriding previously merged ones.
+
+Once the groups are merged in, any group functions can be merged using `    ConfigurationResolver::Resolver.merge_group_functions
+`.
+
+The final resolved parameter list can be retrieved using 
+
+```ruby
+    params = ConfigurationResolver::UserInput.get_arguments_using(
+      ConfigurationResolver::Resolver.all_params,
+      {:acceptDefaults => 'true'},
+      {}
+    )
+```
+
+See the [configuration_resolver_test](test) for sample invocations.
 
 ## Development
 
