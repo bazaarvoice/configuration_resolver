@@ -2,6 +2,7 @@
 # CALLERS: core_params.rb
 
 require 'optparse'
+require 'json'
 
 module ConfigurationResolver
 
@@ -132,10 +133,9 @@ module ConfigurationResolver
     def self.interactively_set_params(default_param_functions, parameters, promptable_parameters)
 
       prev_unset = nil
-      all_deps = [].to_set
-      inspect = false
+      all_deps = []
       # Interactively set the remaining parameters.
-      dependency_function_results = {}
+
       # While there are unset parameters,
       until (unset_params = default_param_functions.keys.select{|param| parameters[param].nil?}.select{|param| promptable_parameters.include?(param)}).empty?
         # If it's clear we're not going to be able to resolve the function graph,
@@ -164,7 +164,7 @@ module ConfigurationResolver
           if (
           no_dependencies ||
             default_param_functions[param].last[:dependencies].select{
-              |param| parameters[param].nil?
+              |p| parameters[p].nil?
             }.empty?
           )
             if default_param_functions[param].last.keys.include?(:dependencyFunction)
@@ -178,9 +178,9 @@ module ConfigurationResolver
             if no_dependencies
               default_value = default_param_functions[param].last[:function].nil? ? nil : default_param_functions[param].last[:function].call({})
             elsif !default_param_functions[param].last[:dependencyFunction].nil?
-              default_value = default_param_functions[param].last[:function].nil? ? nil : default_param_functions[param].last[:function].call(Hash[real_dependencies.map{|param| [param, parameters[param]]}])
+              default_value = default_param_functions[param].last[:function].nil? ? nil : default_param_functions[param].last[:function].call(Hash[real_dependencies.map{|p| [p, parameters[p]]}])
             else
-              default_value = default_param_functions[param].last[:function].nil? ? nil : default_param_functions[param].last[:function].call(Hash[default_param_functions[param].last[:dependencies].map{|param| [param, parameters[param]]}])
+              default_value = default_param_functions[param].last[:function].nil? ? nil : default_param_functions[param].last[:function].call(Hash[default_param_functions[param].last[:dependencies].map{|p| [p, parameters[p]]}])
             end
             if parameters[:loadFrom].nil? || parameters[:loadFrom].empty?
               # First bit of user prompting is to inform the user of which parameter we're inspecting.
@@ -227,7 +227,7 @@ module ConfigurationResolver
             # If all of the dependencies are set, and this parameter isn't set,
             if (no_dependencies ||
               default_param_functions[param].last[:dependencies].select{
-                |param| parameters[param].nil?
+                |p| parameters[p].nil?
               }.empty?
             ) && parameters[param].nil?
 
@@ -244,9 +244,9 @@ module ConfigurationResolver
                 if no_dependencies
                   default_value = default_param_functions[param].last[:function].call({})
                 elsif !default_param_functions[param].last[:dependencyFunction].nil?
-                  default_value = default_param_functions[param].last[:function].nil? ? nil : default_param_functions[param].last[:function].call(Hash[real_dependencies.map{|param| [param, parameters[param]]}])
+                  default_value = default_param_functions[param].last[:function].nil? ? nil : default_param_functions[param].last[:function].call(Hash[real_dependencies.map{|p| [p, parameters[p]]}])
                 else
-                  default_value = default_param_functions[param].last[:function].call(Hash[default_param_functions[param].last[:dependencies].map{|param| [param, parameters[param]]}])
+                  default_value = default_param_functions[param].last[:function].call(Hash[default_param_functions[param].last[:dependencies].map{|p| [p, parameters[p]]}])
                 end
               end
               if default_param_functions[param].last[:executeOnlyOnce]

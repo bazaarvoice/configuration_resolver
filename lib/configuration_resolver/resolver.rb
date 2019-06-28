@@ -115,9 +115,9 @@ module ConfigurationResolver
     end
 
     def self.merge_params(params)
-      # If you don't define a group in your RepoParams, then we can't correctly handle unpublished functions.
+      # If you don't define a group in your group params, then we can't correctly handle unpublished functions.
       raise "Must provide a group to merge params into." if params[:group].nil? || params[:group][:function].nil?
-      # Group should not have any other parameters because the group is part of the maven group id for your repository.
+      # Group should not have any other parameters because it defines the layer for this set of parameters
       raise "Group must not depend on any other parameters." unless params[:group][:dependencies].nil?
       # Record the group doing the merge so that only this group exercises this group's function overrides.  (Unless the functions are published.)
       param_group = params[:group][:function].call({})

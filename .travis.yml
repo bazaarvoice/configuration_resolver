@@ -1,5 +1,6 @@
-sudo: false
 language: ruby
 rvm:
-  - 2.5.3
-before_install: gem install bundler -v 1.16.2
+- 2.3
+script:
+  - rake clean
+  - rake build
