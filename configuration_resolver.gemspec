@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.version       = "#{spec.version}.#{ENV['TRAVIS_BUILD_NUMBER']}" \
                           if ENV['TRAVIS'] && ConfigurationResolver::VERSION.include?('.pre')
   spec.authors       = ['arvindth']
-  spec.email         = ['arvind.thirunarayanan@bazaarvoice.com']
+  spec.email         = ['arvth-git@yahoo.com']
 
   spec.summary       = %q{Hierarchical dependency based configuration}
   spec.description   = %q{Dynamically resolved configuration based on hierarchical defined groups}
